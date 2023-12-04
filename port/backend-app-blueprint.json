@@ -1,0 +1,70 @@
+{
+    "identifier": "backend-app",
+    "description": "This blueprint represents a backend application",
+    "title": "Backend App",
+    "icon": "Microservice",
+    "schema": {
+      "properties": {
+        "url": {
+          "type": "string",
+          "title": "Github URL",
+          "icon": "Github",
+          "format": "url",
+          "default": "https://git.com",
+          "description": "The link to the GitHub repo"
+        },
+        "language": {
+          "type": "string",
+          "icon": "Git",
+          "title": "Language",
+          "default": "Go",
+          "enum": [
+            "Go"
+          ],
+          "enumColors": {
+            "Go": "red"
+          }
+        },
+        "host": {
+          "type": "string",
+          "title": "Host",
+          "description": "Host"
+        },
+        "db-version": {
+          "type": "string",
+          "title": "DB Version",
+          "description": "DB version"
+        },
+        "db-size": {
+          "type": "string",
+          "title": "DB Size",
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "description": "DB size"
+        },
+        "labels": {
+          "type": "object",
+          "title": "Labels",
+          "description": "Labels of the workload"
+        }
+      },
+      "required": [
+        "url",
+        "language"
+      ]
+    },
+    "mirrorProperties": {},
+    "calculationProperties": {},
+    "relations": {
+      "environment": {
+        "target": "environment",
+        "many": false,
+        "required": true,
+        "title": "Environment"
+      }
+    }
+  }
+  

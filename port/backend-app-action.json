@@ -1,0 +1,77 @@
+[
+  {
+    "identifier": "create-backend-db",
+    "title": "Create Backend App With DB",
+    "userInputs": {
+      "properties": {
+        "repo-org": {
+          "type": "string",
+          "title": "Repo Org",
+          "default": "anees-mscs-org"
+        },
+        "repo-user": {
+          "type": "string",
+          "title": "Repo User",
+          "default": "vfarcic"
+        },
+        "repo-name": {
+          "type": "string",
+          "title": "Repo Name",
+          "default": ""
+        },
+        "image-repo": {
+          "type": "string",
+          "title": "Image repository",
+          "default": "docker.io/vfarcic"
+        },
+        "host": {
+          "type": "string",
+          "title": "Host",
+          "default": ""
+        },
+        "db-version": {
+          "type": "string",
+          "title": "DB Version",
+          "default": "13"
+        },
+        "db-size": {
+          "type": "string",
+          "title": "DB Size",
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "default": "medium"
+        },
+        "environment": {
+          "type": "string",
+          "title": "Environment",
+          "enum": [
+            "production"
+          ],
+          "default": "production"
+        }
+      },
+      "required": [
+        "repo-org",
+        "repo-user",
+        "repo-name",
+        "image-repo",
+        "host",
+        "db-version",
+        "db-size",
+        "environment"
+      ]
+    },
+    "invocationMethod": {
+      "type": "GITHUB",
+      "org": "anees-mscs-org",
+      "repo": "idp-demo",
+      "workflow": "create-app-db.yaml",
+      "omitPayload": true
+    },
+    "trigger": "CREATE",
+    "description": "Create a new backend application with a DB."
+  }
+]

@@ -1,372 +1,309 @@
 #!/bin/sh
 set -e
 
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'Setup for the Internal Developer Platform demo' \
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'Setup for the Internal Developer Platform demo' \
+
+# gum confirm '
+# Are you ready to start?
+# Feel free to say "No" and inspect the script if you prefer setting up resources manually.
+# ' || exit 0
+
+# # rm -f .env
+
+# # ################
+# # # Requirements #
+# # ################
+
+# echo "
+# ## You will need following tools installed:
+# |Name            |Required             |More info                                          |
+# |----------------|---------------------|---------------------------------------------------|
+# |Charm Gum       |Yes                  |'https://github.com/charmbracelet/gum#installation'|
+# |GitHub CLI      |Yes                  |'https://cli.github.com/'                     |
+# |jq              |Yes                  |'https://stedolan.github.io/jq/download'           |
+# |yq              |Yes                  |'https://github.com/mikefarah/yq#install'          |
+# |kubectl         |Yes                  |'https://kubernetes.io/docs/tasks/tools/#kubectl'  |
+# |helm            |Yes                  |'https://helm.sh/docs/intro/install/'              |
+# |AWS CLI         |If using AWS         |'https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html'|
+# |eksctl          |If using AWS         |'https://eksctl.io/introduction/#installation'     |
+# " | gum format
+
+# gum confirm "
+# Do you have those tools installed?
+# " || exit 0
+
 
-gum confirm '
-Are you ready to start?
-Feel free to say "No" and inspect the script if you prefer setting up resources manually.
-' || exit 0
+# gum confirm "
+# Are you loggedin to GitHub CLI?,  if not please run 'gh auth login' and follow the instructions.
+# " || exit 0
 
-# rm -f .env
 
-################
-# Requirements #
-################
+# # AWS
+# HYPERSCALER=aws
+# echo "export HYPERSCALER=$HYPERSCALER" >> .env
 
-echo "
-## You will need following tools installed:
-|Name            |Required             |More info                                          |
-|----------------|---------------------|---------------------------------------------------|
-|Charm Gum       |Yes                  |'https://github.com/charmbracelet/gum#installation'|
-|GitHub CLI      |Yes                  |'https://youtu.be/BII6ZY2Rnlc'                     |
-|jq              |Yes                  |'https://stedolan.github.io/jq/download'           |
-|yq              |Yes                  |'https://github.com/mikefarah/yq#install'          |
-|kubectl         |Yes                  |'https://kubernetes.io/docs/tasks/tools/#kubectl'  |
-|helm            |Yes                  |'https://helm.sh/docs/intro/install/'              |
-|AWS CLI         |If using AWS         |'https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html'|
-|eksctl          |If using AWS         |'https://eksctl.io/introduction/#installation'     |
-" | gum format
+# ###############
+# # GitHub Repo #
+# ###############
 
-gum confirm "
-Do you have those tools installed?
-" || exit 0
+# echo
+# echo
 
+# GITHUB_ORG=$(gum input --placeholder "GitHub organization (do NOT use GitHub username)" --value "$GITHUB_ORG")
+# echo "export GITHUB_ORG=$GITHUB_ORG" >> .env
 
-gum confirm "
-Are you loggedin to GitHub CLI?,  if not please run 'gh auth login' and follow the instructions.
-" || exit 0
+# GITHUB_USER=$(gum input --placeholder "GitHub username" --value "$GITHUB_USER")
+# echo "export GITHUB_USER=$GITHUB_USER" >> .env
 
+# gh repo set-default ${GITHUB_ORG}/idp-demo
 
-# AWS
-HYPERSCALER=aws
-echo "export HYPERSCALER=$HYPERSCALER" >> .env
+# gum confirm "
+# We need to authorize GitHub CLI to manage your secrets. You need to be the organization admin.
+# " && gh auth refresh --hostname github.com --scopes admin:org  || exit 0
 
-###############
-# GitHub Repo #
-###############
+# gum confirm "
+# We need to create GitHub secret ORG_ADMIN_TOKEN under the organization.
+# Choose \"No\" if you already have it.
+# " \
+#     && ORG_ADMIN_TOKEN=$(gum input --placeholder "Please enter GitHub organization admin token." --password) \
+#     && gh secret set ORG_ADMIN_TOKEN --body "$ORG_ADMIN_TOKEN" --org ${GITHUB_ORG} --visibility all
 
-echo
-echo
+# DOCKERHUB_USER=$(gum input --placeholder "Please enter Docker Hub user")
+# echo "export DOCKERHUB_USER=$DOCKERHUB_USER" >> .env
 
-GITHUB_ORG=$(gum input --placeholder "GitHub organization (do NOT use GitHub username)" --value "$GITHUB_ORG")
-echo "export GITHUB_ORG=$GITHUB_ORG" >> .env
+# gum confirm "
+# We need to create GitHub secret DOCKERHUB_USER.
+# Choose \"No\" if you already added it.
+# " \
+#     && gh secret set DOCKERHUB_USER --body "$DOCKERHUB_USER" --org ${GITHUB_ORG} --visibility all
 
-GITHUB_USER=$(gum input --placeholder "GitHub username" --value "$GITHUB_USER")
-echo "export GITHUB_USER=$GITHUB_USER" >> .env
+# gum confirm "
+# We need to create GitHub secret DOCKERHUB_TOKEN.
+# Choose \"No\" if you already have it.
+# " \
+#     && DOCKERHUB_TOKEN=$(gum input --placeholder "Please enter Docker Hub token (more info: https://docs.docker.com/docker-hub/access-tokens)." --password) \
+#     && gh secret set DOCKERHUB_TOKEN --body "$DOCKERHUB_TOKEN" --org ${GITHUB_ORG} --visibility all
 
-# gum confirm "Fork the anees-mscs-org/mscs-idp-demo repository?" && gh repo fork anees-mscs-org/mscs-idp-demo --clone --remote --org ${GITHUB_ORG} || exit 0
+# export KUBECONFIG=$PWD/kubeconfig.yaml
+# echo "export KUBECONFIG=$KUBECONFIG" >> .env
 
 
-# cd ..
-# mv mscs-idp-demo idp-demo
-cd idp-demo
-gh repo set-default ${GITHUB_ORG}/idp-demo
-cd ..
+# ###############
+# # AWS SETUP #
+# ###############
 
+# # cat scripts/create-repo-app-db.sh | sed -e "s@google@aws@g" | tee scripts/create-repo-app-db.sh.tmp
+# # mv scripts/create-repo-app-db.sh.tmp scripts/create-repo-app-db.sh
+# # cat argocd/port.yaml | sed -e "s@google@aws@g" | tee argocd/port.yaml.tmp
+# # mv argocd/port.yaml.tmp argocd/port.yaml
+# # cd idp-demo
+# # set +e
+# # git add .
+# # git commit -m "AWS"
+# # git push
+# # set -e
+# # cd ..
 
-gum confirm "
-We need to authorize GitHub CLI to manage your secrets.
-" && gh auth refresh --hostname github.com --scopes admin:org  || exit 0
+# echo
 
+# AWS_ACCESS_KEY_ID=$(gum input --placeholder "AWS Access Key ID" --value "$AWS_ACCESS_KEY_ID")
+# echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
 
-gum confirm "
-We need to create GitHub secret ORG_ADMIN_TOKEN.
-Choose \"No\" if you already have it.
-" \
-    && ORG_ADMIN_TOKEN=$(gum input --placeholder "Please enter GitHub organization admin token." --password) \
-    && gh secret set ORG_ADMIN_TOKEN --body "$ORG_ADMIN_TOKEN" --org ${GITHUB_ORG} --visibility all
+# AWS_SECRET_ACCESS_KEY=$(gum input --placeholder "AWS Secret Access Key" --value "$AWS_SECRET_ACCESS_KEY" --password)
+# echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
 
-DOCKERHUB_USER=$(gum input --placeholder "Please enter Docker Hub user")
-echo "export DOCKERHUB_USER=$DOCKERHUB_USER" >> .env
+# AWS_ACCOUNT_ID=$(gum input --placeholder "AWS Account ID" --value "$AWS_ACCOUNT_ID")
+# echo "export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> .env
 
-gum confirm "
-We need to create GitHub secret DOCKERHUB_USER.
-Choose \"No\" if you already have it.
-" \
-    && gh secret set DOCKERHUB_USER --body "$DOCKERHUB_USER" --org ${GITHUB_ORG} --visibility all
+# export AWS_DEFAULT_REGION=us-east-1
+# export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+# export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 
-gum confirm "
-We need to create GitHub secret DOCKERHUB_TOKEN.
-Choose \"No\" if you already have it.
-" \
-    && DOCKERHUB_TOKEN=$(gum input --placeholder "Please enter Docker Hub token (more info: https://docs.docker.com/docker-hub/access-tokens)." --password) \
-    && gh secret set DOCKERHUB_TOKEN --body "$DOCKERHUB_TOKEN" --org ${GITHUB_ORG} --visibility all
+# eksctl create cluster --config-file eksctl-config.yaml --kubeconfig $KUBECONFIG
 
-export KUBECONFIG=$PWD/kubeconfig.yaml
-echo "export KUBECONFIG=$KUBECONFIG" >> .env
+# eksctl create addon --name aws-ebs-csi-driver --cluster dot --service-account-role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/AmazonEKS_EBS_CSI_DriverRole --force
 
-################
-# Hyperscalers #
-################
+# kubectl create namespace crossplane-system
 
-if [[ "$HYPERSCALER" == "google" ]]; then
+# echo "[default]
+# aws_access_key_id = $AWS_ACCESS_KEY_ID
+# aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
+# " >aws-creds.conf
 
-    # export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-    gcloud components install gke-gcloud-auth-plugin
+# kubectl --namespace crossplane-system create secret generic aws-creds --from-file creds=./aws-creds.conf
 
-    export PROJECT_ID=dot-$(date +%Y%m%d%H%M%S)
-    echo "export PROJECT_ID=${PROJECT_ID}" >> .env
+# set +e
+# aws secretsmanager create-secret --name production-postgresql --region us-east-1 --secret-string '{"password": "YouWillNeverFindOut"}'
+# set -e
 
-    gcloud projects create ${PROJECT_ID}
+# kubectl create namespace external-secrets
 
-    echo "
-Please open https://console.cloud.google.com/marketplace/product/google/container.googleapis.com?project=${PROJECT_ID} in a browser and *ENABLE* the API."
+# kubectl create namespace production
 
-    gum input --placeholder "
-Press the enter key to continue."
+# kubectl --namespace production create secret generic aws --from-literal access-key-id=$AWS_ACCESS_KEY_ID --from-literal secret-access-key=$AWS_SECRET_ACCESS_KEY
 
-    echo "
-Please open https://console.cloud.google.com/apis/library/sqladmin.googleapis.com?project=${PROJECT_ID} in a browser and *ENABLE* the API."
+# ##############
+# # Crossplane #
+# ##############
 
-    gum input --placeholder "
-Press the enter key to continue."
+# helm repo add crossplane-stable https://charts.crossplane.io/stable
 
-    echo "
-Please open https://console.cloud.google.com/marketplace/product/google/secretmanager.googleapis.com?project=${PROJECT_ID} in a browser and *ENABLE* the API."
+# helm repo update
 
-    gum input --placeholder "
-Press the enter key to continue."
+# helm upgrade --install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace --wait
 
-    export SA_NAME=devops-toolkit
+# kubectl apply --filename crossplane-config/provider-kubernetes-incluster.yaml
 
-    export SA="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+# kubectl apply --filename crossplane-config/provider-helm-incluster.yaml
 
-    gcloud iam service-accounts create $SA_NAME --project ${PROJECT_ID}
+# kubectl wait --for=condition=healthy provider.pkg.crossplane.io --all --timeout=300s
 
-    export ROLE=roles/admin
+# kubectl apply --filename crossplane-config/config-sql.yaml
 
-    gcloud projects add-iam-policy-binding --role $ROLE ${PROJECT_ID} --member serviceAccount:$SA
+# kubectl apply --filename crossplane-config/config-app.yaml
 
-    gcloud iam service-accounts keys create gcp-creds.json --project ${PROJECT_ID} --iam-account $SA
+# gum spin --spinner line --title "Waiting for the cluster to stabilize (1 minute)..." -- sleep 60
 
-    gcloud container clusters create dot --project ${PROJECT_ID} --region us-east1 --machine-type e2-standard-4 --num-nodes 1 --no-enable-autoupgrade --enable-autoscaling --min-nodes=1 --max-nodes=6
+# kubectl wait --for=condition=healthy provider.pkg.crossplane.io --all --timeout=600s
 
-    gcloud container clusters get-credentials dot --project ${PROJECT_ID} --region us-east1
 
-    gum spin --spinner line --title "Waiting for the cluster to be available..." -- sleep 30
+# kubectl apply --filename crossplane-config/provider-config-$HYPERSCALER-official.yaml
 
-    kubectl create namespace crossplane-system
 
-    kubectl --namespace crossplane-system create secret generic gcp-creds --from-file creds=./gcp-creds.json
+# #################
+# # Setup Traefik #
+# #################
 
-    gcloud iam service-accounts --project ${PROJECT_ID} create external-secrets
+# helm upgrade --install traefik traefik --repo https://helm.traefik.io/traefik --namespace traefik --create-namespace --wait
 
-    echo '{"password": "YouWillNeverFindOut"}\c' | gcloud secrets --project ${PROJECT_ID} create production-postgresql --data-file=-
+# gum spin --spinner line --title "Waiting for the ELB DNS to propagate..." -- sleep 120
 
-    gcloud secrets --project ${PROJECT_ID} add-iam-policy-binding production-postgresql --member "serviceAccount:external-secrets@${PROJECT_ID}.iam.gserviceaccount.com" --role "roles/secretmanager.secretAccessor"
+# INGRESS_HOSTNAME=$(kubectl --namespace traefik get service traefik --output jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 
-    gcloud iam service-accounts --project ${PROJECT_ID} keys create account.json --iam-account=external-secrets@${PROJECT_ID}.iam.gserviceaccount.com
+# INGRESS_HOST=$(dig +short $INGRESS_HOSTNAME | sed -n 1p) 
 
-    kubectl create namespace external-secrets
+# echo "export INGRESS_HOST=$INGRESS_HOST" >> .env
 
-    kubectl create namespace production
+# ##############
+# # Kubernetes #
+# ##############
 
-    kubectl --namespace production create secret generic google --from-file=credentials=account.json
+# yq --inplace ".server.ingress.hosts[0] = \"gitops.${INGRESS_HOST}.nip.io\"" argocd/helm-values.yaml
 
-    yq --inplace ".spec.provider.gcpsm.projectID = \"${PROJECT_ID}\"" idp-demo/eso/secret-store-google.yaml
+# # cd idp-demo
+# export REPO_URL=$(git config --get remote.origin.url)
+# # cd ..
 
-elif [[ "$HYPERSCALER" == "aws" ]]; then
+# yq --inplace ".spec.source.repoURL = \"${REPO_URL}\"" argocd/apps.yaml
 
-    cat idp-demo/scripts/create-repo-app-db.sh | sed -e "s@google@aws@g" | tee idp-demo/scripts/create-repo-app-db.sh.tmp
-    mv idp-demo/scripts/create-repo-app-db.sh.tmp idp-demo/scripts/create-repo-app-db.sh
-    cat idp-demo/argocd/port.yaml | sed -e "s@google@aws@g" | tee idp-demo/argocd/port.yaml.tmp
-    mv idp-demo/argocd/port.yaml.tmp idp-demo/argocd/port.yaml
-    cd idp-demo
-    set +e
-    git add .
-    git commit -m "AWS"
-    git push
-    set -e
-    cd ..
+# yq --inplace ".spec.source.repoURL = \"${REPO_URL}\"" argocd/schema-hero.yaml
 
-    echo
+# kubectl apply --filename k8s/namespaces.yaml
 
-    AWS_ACCESS_KEY_ID=$(gum input --placeholder "AWS Access Key ID" --value "$AWS_ACCESS_KEY_ID")
-    echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
-    
-    AWS_SECRET_ACCESS_KEY=$(gum input --placeholder "AWS Secret Access Key" --value "$AWS_SECRET_ACCESS_KEY" --password)
-    echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
+# ########
+# # Port #
+# ########
 
-    AWS_ACCOUNT_ID=$(gum input --placeholder "AWS Account ID" --value "$AWS_ACCOUNT_ID")
-    echo "export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> .env
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'1. Open https://app.getport.io in a browser
 
-    export AWS_DEFAULT_REGION=us-east-1
+# 2. Register (if not already).
 
-    eksctl create cluster --config-file idp-demo/eksctl-config.yaml --kubeconfig $KUBECONFIG
+# 3. Select the "Builder" page.
 
-    eksctl create addon --name aws-ebs-csi-driver --cluster dot --service-account-role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/AmazonEKS_EBS_CSI_DriverRole --force
+# 4. Click the "+ Add" button, select  "Choose from template",
+# followed with  "Map your Kubernetes ecosystem".
 
-    kubectl create namespace crossplane-system
+# 5. Click the  "Get this template" button, keep  "Are you using
+# ArgoCD" set to  "False", and click the  "Next" button, ignore
+# the instructions to run a script and click the "Done" button.'
 
-    echo "[default]
-aws_access_key_id = $AWS_ACCESS_KEY_ID
-aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
-" >aws-creds.conf
+# gum input --placeholder "
+# Press the enter key to continue."
 
-    kubectl --namespace crossplane-system create secret generic aws-creds --from-file creds=./aws-creds.conf
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'Follow the instructions from https://github.com/apps/getport-io to install the Port GitHub App.'
 
-    set +e
-    aws secretsmanager create-secret --name production-postgresql --region us-east-1 --secret-string '{"password": "YouWillNeverFindOut"}'
-    set -e
+# gum input --placeholder "
+# Press the enter key to continue."
 
-    kubectl create namespace external-secrets
+# ##################
+# # GitHub Actions #
+# ##################
 
-    kubectl create namespace production
+# yq --inplace ".on.workflow_dispatch.inputs.repo-user.default = \"${GITHUB_USER}\"" .github/workflows/create-app-db.yaml
 
-    kubectl --namespace production create secret generic aws --from-literal access-key-id=$AWS_ACCESS_KEY_ID --from-literal secret-access-key=$AWS_SECRET_ACCESS_KEY
-else
-    echo "Azure is NOT supported yet."
-fi
+# yq --inplace ".on.workflow_dispatch.inputs.image-repo.default = \"docker.io/${DOCKERHUB_USER}\"" .github/workflows/create-app-db.yaml
 
-##############
-# Crossplane #
-##############
+# cat port/backend-app-action.json \
+#     | jq ".[0].userInputs.properties.\"repo-org\".default = \"$GITHUB_ORG\"" \
+#     | jq ".[0].invocationMethod.org = \"$GITHUB_ORG\"" \
+#     > port/backend-app-action.json.tmp
 
-helm repo add crossplane-stable https://charts.crossplane.io/stable
+# mv port/backend-app-action.json.tmp port/backend-app-action.json
 
-helm repo update
+# gh repo view --web $GITHUB_ORG/idp-demo
 
-helm upgrade --install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace --wait
+# echo "
+# Open \"Actions\" and enable GitHub Actions."
 
-kubectl apply --filename idp-demo/crossplane-config/provider-kubernetes-incluster.yaml
-
-kubectl apply --filename idp-demo/crossplane-config/provider-helm-incluster.yaml
-
-kubectl wait --for=condition=healthy provider.pkg.crossplane.io --all --timeout=300s
-
-kubectl apply --filename idp-demo/crossplane-config/config-sql.yaml
-
-kubectl apply --filename idp-demo/crossplane-config/config-app.yaml
-
-gum spin --spinner line --title "Waiting for the cluster to stabilize (1 minute)..." -- sleep 60
-
-kubectl wait --for=condition=healthy provider.pkg.crossplane.io --all --timeout=600s
-
-if [[ "$HYPERSCALER" == "google" ]]; then
-    echo "apiVersion: gcp.upbound.io/v1beta1
-kind: ProviderConfig
-metadata:
-  name: default
-spec:
-  projectID: ${PROJECT_ID}
-  credentials:
-    source: Secret
-    secretRef:
-      namespace: crossplane-system
-      name: gcp-creds
-      key: creds" \
-    | kubectl apply --filename -
-else
-    kubectl apply --filename idp-demo/crossplane-config/provider-config-$HYPERSCALER-official.yaml
-fi
-
-#################
-# Setup Traefik #
-#################
-
-helm upgrade --install traefik traefik --repo https://helm.traefik.io/traefik --namespace traefik --create-namespace --wait
-
-if [[ "$HYPERSCALER" == "aws" ]]; then
-
-    gum spin --spinner line --title "Waiting for the ELB DNS to propagate..." -- sleep 120
-
-    INGRESS_HOSTNAME=$(kubectl --namespace traefik get service traefik --output jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-
-    INGRESS_HOST=$(dig +short $INGRESS_HOSTNAME | sed -n 1p) 
-
-else
-
-    INGRESS_HOST=$(kubectl --namespace traefik get service traefik --output jsonpath="{.status.loadBalancer.ingress[0].ip}")
-
-fi
-
-echo "export INGRESS_HOST=$INGRESS_HOST" >> .env
-
-##############
-# Kubernetes #
-##############
-
-yq --inplace ".server.ingress.hosts[0] = \"gitops.${INGRESS_HOST}.nip.io\"" idp-demo/argocd/helm-values.yaml
-
-cd idp-demo
-
-export REPO_URL=$(git config --get remote.origin.url)
-
-cd ..
-
-yq --inplace ".spec.source.repoURL = \"${REPO_URL}\"" idp-demo/argocd/apps.yaml
-
-yq --inplace ".spec.source.repoURL = \"${REPO_URL}\"" idp-demo/argocd/schema-hero.yaml
-
-kubectl apply --filename idp-demo/k8s/namespaces.yaml
-
-########
-# Port #
-########
-
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'1. Open https://app.getport.io in a browser
-
-2. Register (if not already).
-
-3. Select the "Builder" page.
-
-4. Click the "+ Add" button, select  "Choose from template",
-followed with  "Map your Kubernetes ecosystem".
-
-5. Click the  "Get this template" button, keep  "Are you using
-ArgoCD" set to  "False", and click the  "Next" button, ignore
-the instructions to run a script and click the "Done" button.'
-
-gum input --placeholder "
-Press the enter key to continue."
-
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'Follow the instructions from
-https://docs.getport.io/build-your-software-catalog/sync-data-to-catalog/git/github/self-hosted-installation#register-ports-github-app
-to install the Port GitHub App.'
-
-gum input --placeholder "
-Press the enter key to continue."
-
-##################
-# GitHub Actions #
-##################
-
-yq --inplace ".on.workflow_dispatch.inputs.repo-user.default = \"${GITHUB_USER}\"" idp-demo/.github/workflows/create-app-db.yaml
-
-yq --inplace ".on.workflow_dispatch.inputs.image-repo.default = \"docker.io/${DOCKERHUB_USER}\"" idp-demo/.github/workflows/create-app-db.yaml
-
-cat idp-demo/port/backend-app-action.json \
-    | jq ".[0].userInputs.properties.\"repo-org\".default = \"$GITHUB_ORG\"" \
-    | jq ".[0].invocationMethod.org = \"$GITHUB_ORG\"" \
-    > idp-demo/port/backend-app-action.json.tmp
-
-mv idp-demo/port/backend-app-action.json.tmp idp-demo/port/backend-app-action.json
-
-gh repo view --web $GITHUB_ORG/idp-demo
-
-echo "
-Open \"Actions\" and enable GitHub Actions."
-
-gum input --placeholder "
-Press the enter key to continue."
+# gum input --placeholder "
+# Press the enter key to continue."
 
 ###########
-# The End #
+# Install ArgoCD
 ###########
 
 gum style \
 	--foreground 212 --border-foreground 212 --border double \
 	--margin "1 2" --padding "2 4" \
 	'The setup is almost finished.' \
-    '
-Execute "source .env" to set the environment variables.'
+    'Executing "source .env" to set the environment variables.'
+
+source .env
+
+
+helm upgrade --install argocd argo-cd \
+    --repo https://argoproj.github.io/argo-helm \
+    --namespace argocd --create-namespace \
+    --values argocd/helm-values.yaml --wait
+
+echo "ArgoCD accessible on http://gitops.$INGRESS_HOST.nip.io"
+
+kubectl apply --filename argocd/project.yaml
+
+kubectl apply --filename argocd/apps.yaml
+
+
+gum style \
+	--foreground 212 --border-foreground 212 --border double \
+	--margin "1 2" --padding "2 4" \
+	'Resetting argocd password to "password"'
+
+#bcrypt(password)=$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa
+kubectl -n argocd patch secret argocd-secret \
+  -p '{"stringData": {
+    "admin.password": "$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa",
+    "admin.passwordMtime": "'$(date +%FT%T%Z)'"
+  }}'
+
+
+##################################
+# Schema Management (SchemaHero) #
+##################################
+
+cp argocd/schema-hero.yaml infra/.
+
+git add .
+
+git commit -m "Add SchemaHero"
+
+git push
+
