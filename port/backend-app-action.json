@@ -17,7 +17,7 @@
         "repo-name": {
           "type": "string",
           "title": "Repo Name",
-          "default": "idp-demo-app"
+          "default": "app1"
         },
         "image-repo": {
           "type": "string",
@@ -27,7 +27,7 @@
         "host": {
           "type": "string",
           "title": "Host",
-          "default": ""
+          "default": "app1.<USE_INGRESS_HOST_IP_HERE>.nip.io"
         },
         "db-version": {
           "type": "string",

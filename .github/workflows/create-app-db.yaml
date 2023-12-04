@@ -16,7 +16,7 @@ on:
         required: true
         description: "Repository name"
         type: string
-        default: "idp-demo-app"
+        default: "app1"
       image-repo:
         required: true
         description: "Image repository"
@@ -31,7 +31,7 @@ on:
         required: true
         description: "Application host name"
         type: string
-        default: "app1.52.54.250.216.nip.io"
+        default: "app1.USE_INGRESS_HOST_IP_HERE.nip.io"
       db-version:
         required: true
         description: "Database version"
