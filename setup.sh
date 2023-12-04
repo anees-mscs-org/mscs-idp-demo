@@ -282,16 +282,24 @@ set -e
 #########################################
 # Secrets Management (External Secrets) #
 #########################################
-# gum style \
-# 	--foreground 212 --border-foreground 212 --border double \
-# 	--margin "1 2" --padding "2 4" \
-# 	'adding secrets management commits to Github.' 
+gum style \
+	--foreground 212 --border-foreground 212 --border double \
+	--margin "1 2" --padding "2 4" \
+	'adding secrets management commits to Github.' 
 
 
 # cp argocd/external-secrets.yaml infra/.
 # git add . 
 # git commit -m "External Secrets"
 # git push
+
+gum style \
+	--foreground 212 --border-foreground 212 --border double \
+	--margin "1 2" --padding "2 4" \
+	'IMPORTANT!!, OPEN argoCD UI, to make sure "external-secrets" app is syncrnonized before proceeding further' 
+
+gum input --placeholder "
+Press the enter key to continue."
 
 # cp eso/secret-store-aws.yaml infra/.
 # git add . 
