@@ -1,3 +1,9 @@
+Codebase for Masters Thesis submission for `REDUCING THE GAP BETWEEN DEVOPS AND DEVELOPERS: EMPOWERING DEVELOPERS WITH INTERNAL DEVELOPER PLATFORMS`
+
+SYED ANEES - DECEMBER 2023
+
+-----
+
 **Prequisites**:
 
 https://github.com/charmbracelet/gum#installation
