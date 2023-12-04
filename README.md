@@ -4,13 +4,13 @@ SYED ANEES - DECEMBER 2023
 
 ---
 
-**Prequisites**:
+# Prequisites:
 
 https://github.com/charmbracelet/gum#installation
 
 ---
 
-**Steps**:
+# Steps:
 
 1. Fork this repository under your GitHub organization with repository name as `idp-demo`. You need to be organization admin of an org to run this demo.
 
@@ -30,7 +30,7 @@ https://github.com/charmbracelet/gum#installation
 
 ---
 
-**Overview**:
+# Overview:
 
 1. Creates an EKS cluster on AWS cloud
 2. Adds secrets to github organization under https://github.com/organizations/org-name/settings/secrets/actions (DOCKERHUB_TOKEN, DOCKERHUB_USER, ORG_ADMIN_TOKEN)
@@ -42,7 +42,7 @@ https://github.com/charmbracelet/gum#installation
 
 ---
 
-**Deployed tools**
+# Deployed tools
 
 1. Port UI - portal for application developers to use pre-configured infrastructure resources by the platfrom team.
 2. ArgoCD - portal for platform team to view deployed apps and infra resources. ArgoCD available on `gitops.${INGRESS_HOST}.nip.io`, where INGRESS_HOST IP can be found in the `.env` file on local once setup is completed.
@@ -56,9 +56,9 @@ kubectl get namespaces
 
 ---
 
-**Known issues**:
+# Known issues
 
-1. The `Create Repo` step of the pipeline `.github/workflows/create-app-db.yaml` intermittently(though rarely) fails. It uses a tool called `devstream` to replace templated variables with user inputted values from port UI. It uses caching and rarely fails to create the transit branch. Which leads to creation of an empty git repository for the application being deployed. The error is not consistent and is not reproducible. Current workaround is to wait for few mins and try deploying the app again. The error is as below:
+1. The `Create Repo` step of the pipeline `.github/workflows/create-app-db.yaml` intermittently(though rarely) fails. It uses a tool called `devstream` to replace templated variables with user inputted values from port UI. It uses caching and rarely fails to create the transit branch. Which leads to creation of an empty git repository for the application being deployed.  Current workaround is to wait for few mins and try deploying the app again. The error is as below:
 
 ```
 2023-12-04 21:05:58 ⚠ [WARN]  Failed to create transit branch: GET https://api.github.com/repos/anees-mscs-org/app12/git/ref/heads/main: 409 Git Repository is empty. []
@@ -84,22 +84,18 @@ app11-controller-0       1/1     Running                      0          40s
   Warning  Failed     15s (x5 over 52s)  kubelet            Error: secret "app11" not found
 ```
 
-````
+```
 # Wait for the relevant secret to get added
 -> kubectl get secrets --all-namespaces | grep app11
 production          app11                                               Opaque                              4      23m
-production          app11-password                                      Opaque                              1      28m```
+production          app11-password                                      Opaque                              1      28m
+```
 
-````
-
+```
 # Delete the pod and let it boot-up again as defined by the replicaset count
-
 -> kubectl delete pod app11-599c5d8557-t5qj5 -n production
 -> kubectl get pods -n production
 NAME READY STATUS RESTARTS AGE
 app11-599c5d8557-7rtlc 1/1 Running 0 23m
 app11-controller-0 1/1 Running 0 29m
-
-```
-
 ```
