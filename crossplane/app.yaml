@@ -2,18 +2,18 @@
 apiVersion: devopstoolkitseries.com/v1alpha1
 kind: AppClaim
 metadata:
-  name: silly-demo
+  name: demo
 spec:
-  id: silly-demo
+  id: demo
   compositionSelector:
     matchLabels:
       type: backend-db-aws
       location: local
   parameters:
     namespace: development
-    image: vfarcic/silly-demo:latest
+    image: syedanees85/demo:latest
     port: 8080
-    host: acme.com
+    host: app.com
     db:
       version: "14.0"
       size: medium

@@ -2,14 +2,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: silly-demo
+  name: demo
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: production
   source:
-    repoURL: https://github.com/vfarcic/silly-demo.git
+    repoURL: https://github.com/org-name/repo-name.git
     targetRevision: HEAD
     path: kustomize/overlays/prod
   destination:
