@@ -24,9 +24,15 @@ https://github.com/charmbracelet/gum#installation
    - Workflows access (workflow)
    - Admin access (admin:org, admin:org_hook)
 
-3. Clone the forked repo on your local
-4. Authenticate Github CLI, run 'gh auth login' and follow the instructions.
-5. run ./setup.sh
+
+3. Update permissions under organization settings in Actions > General view,  select below access for Workflow Permissions:
+
+   - Read and write permissions
+   - Allow GitHub Actions to create and approve pull requests
+
+4. Clone the forked repo on your local
+5. Authenticate Github CLI, run 'gh auth login' and follow the instructions.
+6. run ./setup.sh
 
 ---
 
