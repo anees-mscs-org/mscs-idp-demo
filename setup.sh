@@ -203,10 +203,105 @@ set -e
 
 # kubectl apply --filename k8s/namespaces.yaml
 
-# ########
-# # Port #
-# ########
+# ##################
+# # GitHub Actions #
+# ##################
 
+# yq --inplace ".on.workflow_dispatch.inputs.repo-user.default = \"${GITHUB_USER}\"" .github/workflows/create-app-db.yaml
+
+# yq --inplace ".on.workflow_dispatch.inputs.image-repo.default = \"docker.io/${DOCKERHUB_USER}\"" .github/workflows/create-app-db.yaml
+
+# cat port/backend-app-action.json \
+#     | jq ".[0].userInputs.properties.\"repo-org\".default = \"$GITHUB_ORG\"" \
+#     | jq ".[0].invocationMethod.org = \"$GITHUB_ORG\"" \
+#     > port/backend-app-action.json.tmp
+
+# mv port/backend-app-action.json.tmp port/backend-app-action.json
+
+# gh repo view --web $GITHUB_ORG/idp-demo
+
+# echo "
+# Open \"Actions\" and enable GitHub Actions."
+
+# gum input --placeholder "
+# Press the enter key to continue."
+
+# ##########
+# Install ArgoCD
+# ##########
+
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'The setup is almost finished.' \
+#     'Executing "source .env" to set the environment variables.'
+
+# source .env
+
+
+# helm upgrade --install argocd argo-cd \
+#     --repo https://argoproj.github.io/argo-helm \
+#     --namespace argocd --create-namespace \
+#     --values argocd/helm-values.yaml --wait
+
+# echo "ArgoCD accessible on http://gitops.$INGRESS_HOST.nip.io"
+
+# kubectl apply --filename argocd/project.yaml
+
+# kubectl apply --filename argocd/apps.yaml
+
+
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'Resetting argocd password to "password"'
+
+# #bcrypt(password)=$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa
+# kubectl -n argocd patch secret argocd-secret \
+#   -p '{"stringData": {
+#     "admin.password": "$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa",
+#     "admin.passwordMtime": "'$(date +%FT%T%Z)'"
+#   }}'
+
+
+##################################
+# Schema Management (SchemaHero) #
+##################################
+
+cp argocd/schema-hero.yaml infra/.
+
+git add .
+
+git commit -m "Add SchemaHero"
+
+git push
+
+
+#########################################
+# Secrets Management (External Secrets) #
+#########################################
+
+cp argocd/external-secrets.yaml infra/.
+
+git add . 
+
+git commit -m "External Secrets"
+
+git push
+
+cp eso/secret-store-aws.yaml infra/.
+
+git add . 
+
+git commit -m "External Secrets Store"
+
+git push
+
+
+
+# #########################################
+# # Graphical User Interface (GUI) (Port) #
+# #########################################
 # gum style \
 # 	--foreground 212 --border-foreground 212 --border double \
 # 	--margin "1 2" --padding "2 4" \
@@ -234,76 +329,19 @@ set -e
 # gum input --placeholder "
 # Press the enter key to continue."
 
-# ##################
-# # GitHub Actions #
-# ##################
+# # Add port blueprints
+# gum input --placeholder "
+# Press the enter key to continue."
 
-# yq --inplace ".on.workflow_dispatch.inputs.repo-user.default = \"${GITHUB_USER}\"" .github/workflows/create-app-db.yaml
-
-# yq --inplace ".on.workflow_dispatch.inputs.image-repo.default = \"docker.io/${DOCKERHUB_USER}\"" .github/workflows/create-app-db.yaml
-
-# cat port/backend-app-action.json \
-#     | jq ".[0].userInputs.properties.\"repo-org\".default = \"$GITHUB_ORG\"" \
-#     | jq ".[0].invocationMethod.org = \"$GITHUB_ORG\"" \
-#     > port/backend-app-action.json.tmp
-
-# mv port/backend-app-action.json.tmp port/backend-app-action.json
-
-# gh repo view --web $GITHUB_ORG/idp-demo
-
-# echo "
-# Open \"Actions\" and enable GitHub Actions."
+# cat port/environment-blueprint.json
 
 # gum input --placeholder "
 # Press the enter key to continue."
 
-###########
-# Install ArgoCD
-###########
+# cat port/backend-app-blueprint.json
 
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'The setup is almost finished.' \
-    'Executing "source .env" to set the environment variables.'
+# # Replace `[...]` with the "Client ID"
+# export CLIENT_ID=[...]
 
-source .env
-
-
-helm upgrade --install argocd argo-cd \
-    --repo https://argoproj.github.io/argo-helm \
-    --namespace argocd --create-namespace \
-    --values argocd/helm-values.yaml --wait
-
-echo "ArgoCD accessible on http://gitops.$INGRESS_HOST.nip.io"
-
-kubectl apply --filename argocd/project.yaml
-
-kubectl apply --filename argocd/apps.yaml
-
-
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'Resetting argocd password to "password"'
-
-#bcrypt(password)=$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa
-kubectl -n argocd patch secret argocd-secret \
-  -p '{"stringData": {
-    "admin.password": "$2a$10$rRyBsGSHK6.uc8fntPwVIuLVHgsAhAX7TcdrqW/RADU0uh7CaChLa",
-    "admin.passwordMtime": "'$(date +%FT%T%Z)'"
-  }}'
-
-
-##################################
-# Schema Management (SchemaHero) #
-##################################
-
-cp argocd/schema-hero.yaml infra/.
-
-git add .
-
-git commit -m "Add SchemaHero"
-
-git push
-
+# # Replace `[...]` with the "Client Secret"
+# export CLIENT_SECRET=[...]
