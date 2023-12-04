@@ -297,78 +297,84 @@ gum style \
 	--foreground 212 --border-foreground 212 --border double \
 	--margin "1 2" --padding "2 4" \
 	'IMPORTANT!!, OPEN argoCD UI, to make sure "external-secrets" app is syncrnonized before proceeding further' 
-
 gum input --placeholder "
 Press the enter key to continue."
+gum style \
+	--foreground 212 --border-foreground 212 --border double \
+	--margin "1 2" --padding "2 4" \
+	'adding aws secrets yaml commit to Github.' 
 
-# cp eso/secret-store-aws.yaml infra/.
-# git add . 
-# git commit -m "External Secrets Store"
-# git push
+cp eso/secret-store-aws.yaml infra/.
+git add . 
+git commit -m "External Secrets Store"
+git push
 
 
 
 # #########################################
 # # Graphical User Interface (GUI) (Port) #
 # #########################################
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'1. Open https://app.getport.io in a browser
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'1. Open https://app.getport.io in a browser
 
-2. Register (if not already).
+# 2. Register (if not already).
 
-3. Select the "Builder" page.
+# 3. Select the "Builder" page.
 
-4. Click the "+ Add" button, select  "Choose from template",
-followed with  "Map your Kubernetes ecosystem".
+# 4. Click the "+ Add" button, select  "Choose from template",
+# followed with  "Map your Kubernetes ecosystem".
 
-5. Click the  "Get this template" button, keep  "Are you using
-ArgoCD" set to  "False", and click the  "Next" button, ignore
-the instructions to run a script and click the "Done" button.'
+# 5. Click the  "Get this template" button, keep  "Are you using
+# ArgoCD" set to  "False", and click the  "Next" button, ignore
+# the instructions to run a script and click the "Done" button.'
 
-gum input --placeholder "
-Press the enter key to continue."
+# gum input --placeholder "
+# Press the enter key to continue."
 
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'Follow the instructions from https://github.com/apps/getport-io to install the Port GitHub App.'
-gum input --placeholder "
-Press the enter key to continue."
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'Follow the instructions from https://github.com/apps/getport-io to install the Port GitHub App.'
+# gum input --placeholder "
+# Press the enter key to continue."
 
-# Add port blueprints
-echo "copy content of file 'port/environment-blueprint.json' and add it as a custom blueprint in builder view of port"
+# # Add port blueprints
+# echo "copy content of file 'port/environment-blueprint.json' and add it as a custom blueprint in builder view of port"
 
-gum input --placeholder "
-Press the enter key to continue."
+# gum input --placeholder "
+# Press the enter key to continue."
 
-echo "copy content of file 'port/backend-app-blueprint.json' and add it as a custom blueprint in builder view of port"
+# echo "copy content of file 'port/backend-app-blueprint.json' and add it as a custom blueprint in builder view of port"
 
-CLIENT_ID=$(gum input --placeholder "PORT CLIENT_ID" )
-CLIENT_SECRET=$(gum input --placeholder "PORT CLIENT_SECRET" )
+# CLIENT_ID=$(gum input --placeholder "PORT CLIENT_ID" )
+# CLIENT_SECRET=$(gum input --placeholder "PORT CLIENT_SECRET" )
 
-export CLIENT_ID=$CLIENT_ID
-export CLIENT_SECRET=$CLIENT_SECRET
-cat argocd/port.yaml \
-    | sed -e "s@CLIENT_ID@$CLIENT_ID@g" \
-    | sed -e "s@CLIENT_SECRET@$CLIENT_SECRET@g" \
-    | tee infra/port.yaml
+# export CLIENT_ID=$CLIENT_ID
+# export CLIENT_SECRET=$CLIENT_SECRET
+# cat argocd/port.yaml \
+#     | sed -e "s@CLIENT_ID@$CLIENT_ID@g" \
+#     | sed -e "s@CLIENT_SECRET@$CLIENT_SECRET@g" \
+#     | tee infra/port.yaml
 
-gum style \
-	--foreground 212 --border-foreground 212 --border double \
-	--margin "1 2" --padding "2 4" \
-	'adding port ui commits to Github.' 
-gum input --placeholder "
-Press the enter key to continue."
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'adding port ui commits to Github.' 
+# gum input --placeholder "
+# Press the enter key to continue."
 
-git add .
-git commit -m "Port"
-git push
+# git add .
+# git commit -m "Port"
+# git push
 
 
-# Add port app action
-echo 'copy content of file 'port/backend-app-action.json' and Open “Backend App” blueprint schema and click on “Edit JSON” under the three dots menu on the builder view of port. Paste the copied json under the Actions tab'
+# # Add port app action
+# echo 'copy content of file 'port/backend-app-action.json' and Open “Backend App” blueprint schema and click on “Edit JSON” under the three dots menu on the builder view of port. Paste the copied json under the Actions tab'
 
-gum input --placeholder "
-Press the enter key to continue."
+# gum input --placeholder "
+# Press the enter key to continue."
+
+
+
