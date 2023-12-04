@@ -59,3 +59,5 @@ GITHUB_USER=$(gum input --placeholder "GitHub username" --value "$GITHUB_USER")
 echo "export GITHUB_USER=$GITHUB_USER" >> .env
 
 gum confirm "Fork the anees-mscs-org/mscs-idp-demo repository?" && gh repo fork anees-mscs-org/mscs-idp-demo --clone --remote --org ${GITHUB_ORG} || exit 0
+
+
