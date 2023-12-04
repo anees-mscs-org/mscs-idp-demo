@@ -268,80 +268,99 @@ set -e
 # Schema Management (SchemaHero) #
 ##################################
 
-cp argocd/schema-hero.yaml infra/.
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'adding schema management commit to Github.' 
 
-git add .
-
-git commit -m "Add SchemaHero"
-
-git push
+# cp argocd/schema-hero.yaml infra/.
+# git add .
+# git commit -m "Add SchemaHero"
+# git push
 
 
 #########################################
 # Secrets Management (External Secrets) #
 #########################################
+# gum style \
+# 	--foreground 212 --border-foreground 212 --border double \
+# 	--margin "1 2" --padding "2 4" \
+# 	'adding secrets management commits to Github.' 
 
-cp argocd/external-secrets.yaml infra/.
 
-git add . 
+# cp argocd/external-secrets.yaml infra/.
+# git add . 
+# git commit -m "External Secrets"
+# git push
 
-git commit -m "External Secrets"
-
-git push
-
-cp eso/secret-store-aws.yaml infra/.
-
-git add . 
-
-git commit -m "External Secrets Store"
-
-git push
+# cp eso/secret-store-aws.yaml infra/.
+# git add . 
+# git commit -m "External Secrets Store"
+# git push
 
 
 
 # #########################################
 # # Graphical User Interface (GUI) (Port) #
 # #########################################
-# gum style \
-# 	--foreground 212 --border-foreground 212 --border double \
-# 	--margin "1 2" --padding "2 4" \
-# 	'1. Open https://app.getport.io in a browser
+gum style \
+	--foreground 212 --border-foreground 212 --border double \
+	--margin "1 2" --padding "2 4" \
+	'1. Open https://app.getport.io in a browser
 
-# 2. Register (if not already).
+2. Register (if not already).
 
-# 3. Select the "Builder" page.
+3. Select the "Builder" page.
 
-# 4. Click the "+ Add" button, select  "Choose from template",
-# followed with  "Map your Kubernetes ecosystem".
+4. Click the "+ Add" button, select  "Choose from template",
+followed with  "Map your Kubernetes ecosystem".
 
-# 5. Click the  "Get this template" button, keep  "Are you using
-# ArgoCD" set to  "False", and click the  "Next" button, ignore
-# the instructions to run a script and click the "Done" button.'
+5. Click the  "Get this template" button, keep  "Are you using
+ArgoCD" set to  "False", and click the  "Next" button, ignore
+the instructions to run a script and click the "Done" button.'
 
-# gum input --placeholder "
-# Press the enter key to continue."
+gum input --placeholder "
+Press the enter key to continue."
 
-# gum style \
-# 	--foreground 212 --border-foreground 212 --border double \
-# 	--margin "1 2" --padding "2 4" \
-# 	'Follow the instructions from https://github.com/apps/getport-io to install the Port GitHub App.'
+gum style \
+	--foreground 212 --border-foreground 212 --border double \
+	--margin "1 2" --padding "2 4" \
+	'Follow the instructions from https://github.com/apps/getport-io to install the Port GitHub App.'
+gum input --placeholder "
+Press the enter key to continue."
 
-# gum input --placeholder "
-# Press the enter key to continue."
+# Add port blueprints
+echo "copy content of file 'port/environment-blueprint.json' and add it as a custom blueprint in builder view of port"
 
-# # Add port blueprints
-# gum input --placeholder "
-# Press the enter key to continue."
+gum input --placeholder "
+Press the enter key to continue."
 
-# cat port/environment-blueprint.json
+echo "copy content of file 'port/backend-app-blueprint.json' and add it as a custom blueprint in builder view of port"
 
-# gum input --placeholder "
-# Press the enter key to continue."
+CLIENT_ID=$(gum input --placeholder "PORT CLIENT_ID" )
+CLIENT_SECRET=$(gum input --placeholder "PORT CLIENT_SECRET" )
 
-# cat port/backend-app-blueprint.json
+export CLIENT_ID=$CLIENT_ID
+export CLIENT_SECRET=$CLIENT_SECRET
+cat argocd/port.yaml \
+    | sed -e "s@CLIENT_ID@$CLIENT_ID@g" \
+    | sed -e "s@CLIENT_SECRET@$CLIENT_SECRET@g" \
+    | tee infra/port.yaml
 
-# # Replace `[...]` with the "Client ID"
-# export CLIENT_ID=[...]
+gum style \
+	--foreground 212 --border-foreground 212 --border double \
+	--margin "1 2" --padding "2 4" \
+	'adding port ui commits to Github.' 
+gum input --placeholder "
+Press the enter key to continue."
 
-# # Replace `[...]` with the "Client Secret"
-# export CLIENT_SECRET=[...]
+git add .
+git commit -m "Port"
+git push
+
+
+# Add port app action
+echo 'copy content of file 'port/backend-app-action.json' and Open “Backend App” blueprint schema and click on “Edit JSON” under the three dots menu on the builder view of port. Paste the copied json under the Actions tab'
+
+gum input --placeholder "
+Press the enter key to continue."

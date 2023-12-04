@@ -12,17 +12,17 @@
         "repo-user": {
           "type": "string",
           "title": "Repo User",
-          "default": "vfarcic"
+          "default": "aneessyedmscs"
         },
         "repo-name": {
           "type": "string",
           "title": "Repo Name",
-          "default": ""
+          "default": "idp-demo-app"
         },
         "image-repo": {
           "type": "string",
           "title": "Image repository",
-          "default": "docker.io/vfarcic"
+          "default": "docker.io/syedanees85"
         },
         "host": {
           "type": "string",
