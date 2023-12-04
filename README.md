@@ -1,11 +1,9 @@
 **Prequisites**:
 https://github.com/charmbracelet/gum#installation
 
-**NOTE**: You need to be the organization admin to run this demo
-
 **Steps**:
 
-1. Fork this repository under your GitHub organization with repository name as `idp-demo`
+1. Fork this repository under your GitHub organization with repository name as `idp-demo`.  You need to be organization admin of an org to run this demo.
 
 2. Create org admin token (ORG_ADMIN_TOKEN). Under Personal access token settings of the org, enroll access via Personal Access Token(s).  `Personal access token (classic)` was used in this demo.
 The actual token needs to be created under user profile Developer settings with below scopes:
