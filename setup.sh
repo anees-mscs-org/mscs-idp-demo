@@ -360,11 +360,14 @@ gum input --placeholder "
 Press the enter key to continue."
 
 
-
-
 ###########
-# The End #
+# Copy kubeconfig.yaml to default location #
 ###########
+gum confirm "
+We need to copy generated kubeconfig.yaml to ~/.kube/config, note: overwrites existing config file.
+" \
+    && cp kubeconfig.yaml ~/.kube/config || exit 0
+
 
 gum style \
 	--foreground 212 --border-foreground 212 --border double \
