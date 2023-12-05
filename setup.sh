@@ -128,6 +128,13 @@ kubectl create namespace production
 
 kubectl --namespace production create secret generic aws --from-literal access-key-id=$AWS_ACCESS_KEY_ID --from-literal secret-access-key=$AWS_SECRET_ACCESS_KEY
 
+file_contents=$(cat $KUBECONFIG)
+gum confirm "
+We need to create GitHub secret KUBECONFIG_PREVIEWS under the organization. This variable will contain the content of kubeconfig.yaml file.
+" \
+    && gh secret set KUBECONFIG_PREVIEWS --body "$file_contents" --org ${GITHUB_ORG} --visibility all
+
+
 ##############
 # Crossplane #
 ##############
