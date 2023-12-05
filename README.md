@@ -42,7 +42,7 @@ https://github.com/charmbracelet/gum#installation
 # Overview:
 
 1. Creates an EKS cluster on AWS cloud
-2. Adds secrets to github organization under https://github.com/organizations/org-name/settings/secrets/actions (DOCKERHUB_TOKEN, DOCKERHUB_USER, ORG_ADMIN_TOKEN)
+2. Adds secrets to github organization under https://github.com/organizations/org-name/settings/secrets/actions (DOCKERHUB_TOKEN, DOCKERHUB_USER, ORG_ADMIN_TOKEN, KUBECONFIG_PREVIEWS)
 3. Creates various namespace segregation on Kubernetes cluster.
 4. Installs crossplane, Traefik, port-k8s-exporter
 5. Sets up github actions
