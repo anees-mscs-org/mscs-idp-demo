@@ -16,7 +16,7 @@
         },
         "repo-name": {
           "type": "string",
-          "title": "Repo Name",
+          "title": "Application Name",
           "default": "app1"
         },
         "image-repo": {
