@@ -7,12 +7,14 @@
         "repo-org": {
           "type": "string",
           "title": "Repo Org",
-          "default": "anees-mscs-org"
+          "default": "anees-mscs-org",
+          "visible": false
         },
         "repo-user": {
           "type": "string",
           "title": "Repo User",
-          "default": "aneessyedmscs"
+          "default": "aneessyedmscs",
+          "visible": false
         },
         "repo-name": {
           "type": "string",
