@@ -11,6 +11,9 @@ SYED ANEES - DECEMBER 2023
 
 https://github.com/charmbracelet/gum#installation
 
+NOTE: When the port-action to create application with database, the application codebase along with Dockerfile, github workflow configs, kustomize manifests is dynamically generated from an existing template repository present on https://github.com/anees-mscs-org/template-go-backend-db-aws
+
+
 ---
 
 # Steps:
